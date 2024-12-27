@@ -6,6 +6,13 @@ inputs:
   run_command:
     description: 'Command to run for the integration'
     required: true
+  api_url:
+    description: 'Subsets API URL'
+    required: false
+    default: 'https://api.subsets.io'
+  api_key:
+    description: 'Subsets API Key'
+    required: true
 
 runs:
   using: "composite"
@@ -39,6 +46,6 @@ runs:
     - name: Run integration
       shell: bash
       env:
-        SUBSETS_API_KEY: ${{ inputs.SUBSETS_API_KEY }}
-        SUBSETS_API_URL: ${{ inputs.SUBSETS_API_URL || 'https://api.subsets.io' }}
+        SUBSETS_API_KEY: ${{ inputs.api_key }}
+        SUBSETS_API_URL: ${{ inputs.api_url }}
       run: ${{ inputs.run_command }}
