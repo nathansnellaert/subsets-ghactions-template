@@ -7,7 +7,7 @@ Template action for Subsets data integrations using python 3.11 and poetry.
 ```yaml
 jobs:
   integration:
-    uses: subsets-dev/integration-template@v1
+    uses: subsets-dev/integration-template@v0.1
     with:
       run_command: ./run.sh
     secrets:
