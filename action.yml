@@ -1,0 +1,44 @@
+name: 'Subsets Integration Template'
+description: 'Reusable workflow for Subsets data integrations'
+author: 'Your Name'
+
+inputs:
+  run_command:
+    description: 'Command to run for the integration'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+
+    - name: Install Poetry
+      shell: bash
+      run: |
+        curl -sSL https://install.python-poetry.org | python3 -
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+    - name: Install dependencies
+      shell: bash
+      run: poetry install --no-interaction --no-root
+
+    - name: Configure Git
+      shell: bash
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+    - name: Run integration
+      shell: bash
+      env:
+        SUBSETS_API_KEY: ${{ inputs.SUBSETS_API_KEY }}
+        SUBSETS_API_URL: ${{ inputs.SUBSETS_API_URL || 'https://api.subsets.io' }}
+      run: ${{ inputs.run_command }}
