@@ -13,6 +13,10 @@ inputs:
   api_key:
     description: 'Subsets API Key'
     required: true
+  commit_after_run:
+    description: 'Whether to commit changes after running the command'
+    required: false
+    default: false
 
 runs:
   using: "composite"
@@ -49,3 +53,15 @@ runs:
         SUBSETS_API_KEY: ${{ inputs.api_key }}
         SUBSETS_API_URL: ${{ inputs.api_url }}
       run: ${{ inputs.run_command }}
+
+    - name: Commit changes if any
+      if: inputs.commit_after_run == 'true'
+      shell: bash
+      run: |
+        git add .
+        if ! git diff --cached --quiet; then
+          git commit -m "Update data $(date +%Y-%m-%d)"
+          git push
+        else
+          echo "No changes to commit"
+        fi
