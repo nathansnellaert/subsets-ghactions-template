@@ -17,6 +17,9 @@ inputs:
     description: 'Whether to commit changes after running the command'
     required: false
     default: false
+  gcp_credentials:
+    description: 'Google Cloud service account credentials JSON'
+    required: false
 
 runs:
   using: "composite"
@@ -24,6 +27,12 @@ runs:
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0
+
+    - name: Auth with Google Cloud
+      if: inputs.gcp_credentials != ''
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: ${{ inputs.gcp_credentials }}
 
     - name: Set up Python
       uses: actions/setup-python@v5
