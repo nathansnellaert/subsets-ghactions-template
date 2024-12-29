@@ -1,6 +1,6 @@
 name: 'Subsets Integration Template'
 description: 'Reusable workflow for Subsets data integrations'
-author: 'Your Name'
+author: 'Nathan Snellaert'
 
 inputs:
   run_command:
@@ -67,7 +67,7 @@ runs:
       if: inputs.commit_after_run == 'true'
       shell: bash
       run: |
-        git add .
+        git add data/
         if ! git diff --cached --quiet; then
           git commit -m "Update data $(date +%Y-%m-%d)"
           git push
