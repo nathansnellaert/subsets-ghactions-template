@@ -63,6 +63,14 @@ runs:
         SUBSETS_API_URL: ${{ inputs.api_url }}
       run: ${{ inputs.run_command }}
 
+    - name: Upload data directory on failure
+      if: failure()
+      uses: actions/upload-artifact@v3
+      with:
+        name: failed-integration-data
+        path: data/
+        retention-days: 5
+
     - name: Commit changes if any
       if: inputs.commit_after_run == 'true'
       shell: bash
