@@ -1,6 +1,6 @@
 # Subsets Integration Template
 
-WIP Template action that subsets uses for github-action based data integrations. 
+A template for building data connectors powered by GitHub Actions. It handles common integration requirements like Python/Poetry setup, scheduling, and git-based data storage, allowing you to focus on writing the data collection logic. 
 
 ## Usage
 
