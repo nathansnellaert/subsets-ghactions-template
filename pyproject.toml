@@ -1,0 +1,12 @@
+[tool.poetry]
+name = "subsets-ghactions-template"
+version = "0.1.0"
+description = "Template for GitHub Actions"
+authors = ["Your Name <your.email@example.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

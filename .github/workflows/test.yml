@@ -1,0 +1,19 @@
+name: Simple Template Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+        with:
+          run_command: "echo 'Hello World'"
+          api_key: ${{ secrets.SUBSETS_API_KEY }}
+          commit_after_run: false

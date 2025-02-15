@@ -1,0 +1,83 @@
+name: 'Subsets Integration Template'
+description: 'Reusable workflow for Subsets data integrations'
+author: 'Nathan Snellaert'
+
+inputs:
+  run_command:
+    description: 'Command to run for the integration'
+    required: true
+  api_url:
+    description: 'Subsets API URL'
+    required: false
+    default: 'https://api.subsets.io'
+  api_key:
+    description: 'Subsets API Key'
+    required: true
+  commit_after_run:
+    description: 'Whether to commit changes after running the command'
+    required: false
+    default: false
+  gcp_credentials:
+    description: 'Google Cloud service account credentials JSON'
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Auth with Google Cloud
+      if: inputs.gcp_credentials != ''
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: ${{ inputs.gcp_credentials }}
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+
+    - name: Install Poetry
+      shell: bash
+      run: |
+        curl -sSL https://install.python-poetry.org | python3 -
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+    - name: Install dependencies
+      shell: bash
+      run: poetry install --no-interaction --no-root
+
+    - name: Configure Git
+      shell: bash
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+    - name: Run integration
+      shell: bash
+      env:
+        SUBSETS_API_KEY: ${{ inputs.api_key }}
+      run: ${{ inputs.run_command }}
+
+    - name: Upload data directory on failure
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: failed-integration-data
+        path: data/
+        retention-days: 5
+
+    - name: Commit changes if any
+      if: inputs.commit_after_run == 'true'
+      shell: bash
+      run: |
+        git add data/
+        if ! git diff --cached --quiet; then
+          git commit -m "Update data $(date +%Y-%m-%d)"
+          git push
+        else
+          echo "No changes to commit"
+        fi
